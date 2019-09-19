@@ -16,7 +16,7 @@
 <body>
     <div class="wrapper">
         <div class="sample">
-            <form>
+            <form @submit.prevent="formSubmited = true" v-if="!formSubmited">
         		<div class="progress">
 					<div class="progress-bar" :style="progressWidth"></div>
 				</div>
@@ -25,7 +25,7 @@
 	                    <label>{{item.name}}</label>
 						<span class="fa"
 							  v-if="controls[index].activated"
-							  :class="controls[index].error ? '.fa-check-circle' : 'fa-info-circle'"
+							  :class="controls[index].error ? 'fa-info-circle' : 'fa-check-circle'"
 						>
 						</span>
 	                    <input type="text" 
@@ -35,13 +35,12 @@
 						>
 					</div>
 				</div>
-				{{done}}
 				<button class="btn btn-primary" :disabled="done < info.length">
 					Send Data
 				</button>
 			</form>
 
-			<div>
+			<div v-else>
 				<table class="table table-bordered">
 					<tr v-for="(item, index) in info">
 						<td>{{item.name}}</td>
@@ -83,13 +82,14 @@
 						pattern: /.+/
 					}
 				],
-				controls: []
+				controls: [],
+				formSubmited: false
 			},			
 			beforeMount() {
 				for(let i=0; i< this.info.length; i++) {
 					this.controls.push({
-						error: true,
-						activated: false
+						error: !this.info[i].pattern.test(this.info[i].value),
+						activated: this.info[i].value != ''
 					})
 				}
 			},
@@ -103,7 +103,7 @@
 					control.activated = true;
 				}
 			},
-			conputed: {
+			computed: {
 				done() {
 					let done = 0;
 
@@ -112,7 +112,6 @@
 							done++;
 						}
 					}
-
 					return done;
 				},
 				progressWidth() {
