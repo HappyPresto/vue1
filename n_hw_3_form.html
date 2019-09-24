@@ -21,19 +21,12 @@
 					<div class="progress-bar" :style="progressWidth"></div>
 				</div>
 				<div>
-					<div class="form-group" v-for="(item, index) in info">
-	                    <label>{{item.name}}</label>
-						<span class="fa"
-							  v-if="controls[index].activated"
-							  :class="controls[index].error ? 'fa-info-circle' : 'fa-check-circle'"
-						>
-						</span>
-	                    <input type="text" 
-							   class="form-control"
-							   :value="item.value"
-							   @input="onInput(index, $event.target.value)"
-						>
-					</div>
+				<app-input v-for="(item, index) in info"
+							:item="item"
+							:index="index"
+							:controls="controls"
+				>
+				</app-input>
 				</div>
 				<button class="btn btn-primary" :disabled="done < info.length">
 					Send Data
@@ -51,6 +44,38 @@
 		</div>
     </div>
 	<script>
+		Vue.component('app-input', {
+			props: ['item', 'index', 'controls'],
+			template: `
+				<div class="form-group">
+					<label>{{item.name}}</label>
+					<span class="fa"
+							v-if="controls[index].activated"
+							:class="controls[index].error ? 'fa-info-circle' : 'fa-check-circle'"
+					>
+					</span>
+					<input type="text" 
+							class="form-control"
+							:value="item.value"
+							@input="onInput(index, $event.target.value)"
+					>
+				</div>
+			`,
+			methods: {
+				onInput(index, value) {
+					console.log(this.controls);
+					let control = this.controls[index];
+					let data = this.info[index];
+
+					data.value = value;
+					control.error = !data.pattern.test(value);
+					control.activated = true;
+				}
+			},
+			computed: {
+
+			}
+		});
 		
 		new Vue({
 			el: '.sample',

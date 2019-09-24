@@ -18,49 +18,47 @@
 <body>
 <div class="wrapper">
     <div class="sample">
-        <div v-timer:1000.5="onTimer" :style = "{fontSize: fontSize + 'px'}">1</div>
-        <div v-timer:1000.5.run="onTimer" :style = "{fontSize: fontSize + 'px'}">2</div>
-        <!--<div v-timer:1000="onTimer">3</div>-->
+        <div v-timer:1000.5="onTimer">1</div>
+        <div v-timer:1000.5.run="onTimer" >2</div>
+        <div v-timer:1000.1="onTimer">3</div>
     </div>
 </div>
 <script>
     Vue.directive('timer', {
         bind(el, binding) {
             let timer;
-            let counter = 0;
-            let count;
-            for (key in binding.modifiers) {
-                if ((Number(key) != NaN) && (counter == 0)) {
-                    count = key;
+            let interval = binding.arg;
+            let max = false; 
+            let done = 0;
+
+            for (let name in binding.modifiers) {
+                if (!isNaN(+name)) {
+                    max = parseInt(name);
                 }
-                if (key == "run") {
-                    console.log("run");
-                }
-                counter++
             }
-            console.log(binding);
-            // 1000 options.arg
-            // 5 options.modifiers
-            (callback = (e) => {
-                console.log(count);
-                /*if (count <= 0) {
-                    clearInterval(timer);
-                }*/
-                console.log(binding.arg);
 
-                timer = setInterval(() => {
-                    if (count == 0) {
-                        clearInterval(timer);
-                        return
-                    }
-                    binding.value.call(this, e);
-                    count--;
-                    console.log("count - " + count);
-                }, binding.arg)
+            let callback = () => {
+                done++;
+                binding.value(el);
 
-                /*--count;
-                console.log("count - " + count);*/
-            })();
+                if (max == false || done < max) {
+                    timer = setTimeout(() => {       
+                        callback();
+                    }, interval);
+                }
+            };
+
+            if (max == false || done < max) {
+                if (binding.modifiers.run) {
+                    callback();
+                }
+                else {
+                    timer = setTimeout(() => {
+                        callback();
+                    }, interval);
+                }
+            }
+            
         }
     })
 
@@ -68,18 +66,12 @@
     new Vue({
         el: '.sample',
         data: {
-            fontSize: 14,
-            info: [
-
-            ]
         },
         methods: {
-            onTimer() {
-                console.log(this.info.length);
-                this.info.push({
-                    size: 14
-                })
-                console.log(this.info)
+            onTimer(el) {
+                console.log(el);
+                let fontSize = getComputedStyle(el)['fontSize'];
+                el.style.fontSize = parseInt(fontSize) + 10 + 'px';
             }
         }
     })
