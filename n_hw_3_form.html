@@ -22,10 +22,12 @@
 				</div>
 				<div>
 				<app-input v-for="(item, index) in info"
-							:item="item"
-							:index="index"
-							:controls="controls"
-				>
+							:name="item.name"
+							:value="item.value"
+							:pattern="item.pattern"
+							:key="index"
+							@input="onInput(index, $event)"
+				>  <!-- $event формируется на лету, когда подписываемся на событие. Та переменная, которая при $emit будет заслана наверх (в род компонент)-->
 				</app-input>
 				</div>
 				<button class="btn btn-primary" :disabled="done < info.length">
@@ -45,35 +47,41 @@
     </div>
 	<script>
 		Vue.component('app-input', {
-			props: ['item', 'index', 'controls'],
+			props: ['name', 'value', 'pattern'],
 			template: `
 				<div class="form-group">
-					<label>{{item.name}}</label>
-					<span class="fa"
-							v-if="controls[index].activated"
-							:class="controls[index].error ? 'fa-info-circle' : 'fa-check-circle'"
+					<label>{{name}}</label>
+					<span class="fa" 
+						  :class="validClass"
+						  v-if="activated"
 					>
 					</span>
 					<input type="text" 
 							class="form-control"
-							:value="item.value"
-							@input="onInput(index, $event.target.value)"
+							:value="value"
+							@input="onInput"
 					>
 				</div>
 			`,
+			data() {
+				return {
+					activated: this.value != ''
+				}
+			},
 			methods: {
-				onInput(index, value) {
-					console.log(this.controls);
-					let control = this.controls[index];
-					let data = this.info[index];
+				onInput(e) {
+					this.activated = true;
 
-					data.value = value;
-					control.error = !data.pattern.test(value);
-					control.activated = true;
+					this.$emit('input', { /* формирует $event */
+						value: e.target.value,
+						valid: this.pattern.test(e.target.value)
+					});
 				}
 			},
 			computed: {
-
+				validClass() {
+					return this.pattern.test(this.value) ? 'fa-check-circle' : 'fa-info-circle'
+				}
 			}
 		});
 		
@@ -119,13 +127,8 @@
 				}
 			},
 			methods: {
-				onInput(index, value) {
-					let control = this.controls[index];
-					let data = this.info[index];
-
-					data.value = value;
-					control.error = !data.pattern.test(value);
-					control.activated = true;
+				onInput(index, data) {
+					this.info[index].value = data.value;
 				}
 			},
 			computed: {
