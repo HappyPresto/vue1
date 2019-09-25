@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1</title>
+    <link rel="stylesheet" href="css//bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link href="css/styles.css" rel="stylesheet">
+	<style>
+	    .content{
+			height: 300px;
+			overflow: auto;
+		}
+	</style>
+    <script src="js/vue.js"></script>
+</head>
+<body>
+<div class="wrapper">
+    <div class="sample">
+        <app-some
+            :a = "1"
+            :b = "'2'"
+            :c = "3"
+        >
+        </app-some>
+    </div>
+</div>
+<script>
+    Vue.component('appSome', {
+        props: {
+            // a: Number,
+            a: {
+                type: Number,
+                required: true,
+                // default: 100
+                // default() { return { a:1 } }
+                /*validator(val) {
+                    return val > 1 && val < 10;
+                }*/
+            },
+            b: [Number, String],
+            c: null // Любой тип, валидация не ведется
+        },
+        template: `
+            <div>
+                <div>{{ a }}</div>
+                <div>{{ b }}</div>
+                <div>{{ c }}</div>
+            </div>
+        `
+    });
+
+
+    new Vue({
+        el: '.sample',
+        methods: {
+        }
+    })
+</script>
+</body>
+</html>

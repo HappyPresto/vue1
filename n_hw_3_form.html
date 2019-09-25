@@ -26,7 +26,7 @@
 							:value="item.value"
 							:pattern="item.pattern"
 							:key="index"
-							@input="onInput(index, $event)"
+							@changedata="onChangeData(index, $event)"
 				>  <!-- $event формируется на лету, когда подписываемся на событие. Та переменная, которая при $emit будет заслана наверх (в род компонент)-->
 				</app-input>
 				</div>
@@ -72,7 +72,7 @@
 				onInput(e) {
 					this.activated = true;
 
-					this.$emit('input', { /* формирует $event */
+					this.$emit('changedata', { /* формирует $event */
 						value: e.target.value,
 						valid: this.pattern.test(e.target.value)
 					});
@@ -116,32 +116,31 @@
 					}
 				],
 				controls: [],
+				done: 0,
 				formSubmited: false
 			},			
-			beforeMount() {
+			created() {
 				for(let i=0; i< this.info.length; i++) {
-					this.controls.push({
-						error: !this.info[i].pattern.test(this.info[i].value),
-						activated: this.info[i].value != ''
-					})
+					this.controls.push(false);
 				}
 			},
 			methods: {
-				onInput(index, data) {
+				onChangeData(index, data) {
 					this.info[index].value = data.value;
-				}
-			},
-			computed: {
-				done() {
+					this.controls[index] = data.valid;
+
 					let done = 0;
 
 					for(let i=0; i<this.controls.length; i++) {
-						if(!this.controls[i].error) {
+						if(this.controls[i]) {
 							done++;
 						}
 					}
-					return done;
-				},
+					
+					this.done = done;
+				}
+			},
+			computed: {
 				progressWidth() {
 					return {
 						width: (this.done / this.info.length * 100) + '%'
