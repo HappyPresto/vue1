@@ -22,7 +22,9 @@
 
 			<div v-else>
 				<table class="table table-bordered">
-					<tr v-for="(item, index) in info">
+					<tr v-for="(item, index) in info"
+                        :key="index"
+                    >
 						<td>{{item.name}}</td>
 						<td>{{item.value}}</td>
 					</tr>
