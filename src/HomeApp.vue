@@ -1,12 +1,16 @@
 <template>
     <div class="content">
-        <home-input v-for="(item, index) in info" :key="index"
-                    :type = item.type
-                    :title = item.title
-                    :answers = item.answers
-        >
-        </home-input>
-
+            <home-input v-for="(item, index) in info" :key="index"
+                        v-if = "show +1 == item.id"
+                        :info = item
+                        @changedata="addToResult($event, index)"
+            >
+            </home-input>
+            <home-result v-if="show == info.length"
+                        :info = info 
+                        :show = show
+            >
+            </home-result>
     </div>
 </template>
 
@@ -27,7 +31,8 @@ export default {
                         'span',
                         'img'
                     ],
-                    result: []
+                    result: [],
+                    id: 1
                 },
                 {
                     type: 'checkbox',
@@ -38,13 +43,22 @@ export default {
                         'span',
                         'img'
                     ],
-                    result: []
+                    result: [], 
+                    id:2 
                 }
             ],
+            show: 0,
+        }
+    },
+    methods: {
+        addToResult(res, index) {
+            this.info[index].result = res;
+            this.show++;
         }
     },
     components: {
-        HomeInput
+        HomeInput,
+        HomeResult
     }
 }
 </script>
