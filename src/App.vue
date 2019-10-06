@@ -8,10 +8,9 @@
 				<div>
 				<app-input v-for="(item, index) in info"
 							:name="item.name"
-							:value="item.value"
+							:value.sync="item.value"
 							:pattern="item.pattern"
 							:key="index"
-							@changedata="onChangeData(index, $event)"
 				>  <!-- $event формируется на лету, когда подписываемся на событие. Та переменная, которая при $emit будет заслана наверх (в род компонент)-->
 				</app-input>
 				</div>
