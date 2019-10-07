@@ -11,6 +11,7 @@
 							:value.sync="item.value"
 							:pattern="item.pattern"
 							:key="index"
+                            @changeStatus="onChangeData(index, $event)"
 				>  <!-- $event формируется на лету, когда подписываемся на событие. Та переменная, которая при $emit будет заслана наверх (в род компонент)-->
 				</app-input>
 				</div>
@@ -77,9 +78,8 @@ export default {
         }
     },
     methods: {
-        onChangeData(index, data) {
-            this.info[index].value = data.value;
-            this.controls[index] = data.valid;
+        onChangeData(index, status) {
+            this.controls[index] = status;
 
             let done = 0;
 

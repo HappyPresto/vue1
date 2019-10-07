@@ -22,19 +22,28 @@ export default {
             activated: this.value != ''
         }
     },
+    mounted() {
+        this.$emit("changeStatus", this.isValid);
+    },
     methods: {
         onInput(e) {
             this.activated = true;
+            this.$emit('update:value', e.target.value);
 
-            this.$emit('changedata', { /* формирует $event */
-                value: e.target.value,
-                valid: this.pattern.test(e.target.value)
-            });
+
         }
     },
     computed: {
+        isValid() {
+            return this.pattern.test(this.value);
+        },
         validClass() {
-            return this.pattern.test(this.value) ? 'fa-check-circle' : 'fa-info-circle'
+            return this.isValid ? 'fa-check-circle' : 'fa-info-circle'
+        }
+    },
+    watch: {
+        isValid() {
+            this.$emit("changeStatus", this.isValid);
         }
     }
 }
