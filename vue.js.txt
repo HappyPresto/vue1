@@ -178,3 +178,18 @@ new Vue({
       }
   }
 })
+
+Стили
+Стили записываются в 			
+<transition name="fade" appear>
+	<div class="alert alert-success" v-show="show">
+		<div>Some text about some</div>
+	</div>
+</transition>
+В стилях имеет 6 классов:
+- fade-enter - добавляется на секунду, что бы считать начальные свойства
+- fade-enter-active - когда начинает работать анимации
+- fade-enter-to - когда начинает работать анимации (остается еще буквально на доли секунды, после того как наша анимация завершилась)
+- fade-leave
+- fade-leave-active
+- fade-leave-to
